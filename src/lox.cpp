@@ -1,18 +1,11 @@
 #include <cstdlib>
-#include <fstream>
-#include <sstream>
+
 #include "lox.hpp"
+#include "lexer/lexer.hpp"
+#include "utils/utils.hpp"
 
-string fileToString(const string filename) {
-  ifstream file(filename);
-  if (!file.is_open()) exit(66);
-  stringstream buf;
-  file.rdbuf();
-  return buf.str();
-}
-
-int Lox::runFile(string filename) {
-  return this->run(fileToString(filename));
+int Lox::runFile(const string filename) {
+  return this->run(file_to_string(filename));
 }
 
 int Lox::runRepl() {
@@ -24,6 +17,10 @@ int Lox::runRepl() {
 }
 
 int Lox::run(string source) {
+  auto lexer = Lexer(source);
+  vector<Token> tokens = lexer.lex();
+  for (Token token : tokens)
+    cout << stringify_token(token);
   return 0;
 }
 

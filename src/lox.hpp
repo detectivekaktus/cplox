@@ -1,26 +1,17 @@
-#ifndef LOX
-#define LOX
+#ifndef LOX_HPP
+#define LOX_HPP
 
 #include <iostream>
-
 using namespace std;
 
 class Lox {
 public:
   Lox();
   ~Lox();
-  int runFile(string source);
+  int runFile(const string filename);
   int runRepl();
 private:
   int run(string source);
 };
-
-Lox::Lox() {
-
-}
-
-Lox::~Lox() {
-
-}
 
 #endif
