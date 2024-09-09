@@ -4,6 +4,10 @@
 #include "lexer/lexer.hpp"
 #include "utils/utils.hpp"
 
+Lox::Lox() {}
+
+Lox::~Lox() {}
+
 int Lox::runFile(const string filename) {
   return this->run(file_to_string(filename));
 }
