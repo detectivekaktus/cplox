@@ -1,40 +1,31 @@
-#ifndef LOX_LEXER_HPP
-#define LOX_LEXER_HPP
+#ifndef LOX_LEXER
+#define LOX_LEXER
 
-#include <sstream>
 #include <vector>
-using namespace std;
+#include <string>
+#include <memory>
 
 enum class TokenType {
-  VAR,
   EQUAL,
   SEMICOLON,
 
   IDENTIFIER,
   NUMBER,
   STRING,
-  
+
   END_OF_FILE
 };
 
 typedef struct {
   TokenType type;
-  string val;
+  std::string val;
 } Token;
 
 class Lexer {
 public:
-  Lexer(string source);
+  Lexer();
   ~Lexer();
-  vector<Token> lex();
-private:
-  int pos;
-  string source;
-
-  void advance();
-  bool isAtEnd();
+  std::unique_ptr<std::vector<Token>> lex(const std::string source);
 };
-
-string stringify_token(Token token);
 
 #endif
