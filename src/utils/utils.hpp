@@ -4,6 +4,6 @@
 #include <fstream>
 #include <sstream>
 
-std::string fil2String(const std::string filename);
+std::string file2String(const std::string filename);
 
 #endif

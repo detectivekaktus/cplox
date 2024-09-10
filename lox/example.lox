@@ -1,2 +1,1 @@
-var msg = "Hello world";
-print msg;
+5 + 5

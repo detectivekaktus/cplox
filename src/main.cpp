@@ -30,6 +30,7 @@ int main(int argc, char **argv) {
   }
 
   auto lox = std::make_unique<Lox>();
+  lox->compile(inputFile, outputFile);
 
   return 0;
 }

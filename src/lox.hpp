@@ -7,7 +7,7 @@ class Lox {
 public:
   Lox();
   ~Lox();
-  int compile(std::string path, std::string output);
+  int compile(const std::string path, const std::string output);
 };
 
 #endif

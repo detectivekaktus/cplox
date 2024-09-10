@@ -1,17 +1,25 @@
 #ifndef LOX_LEXER
 #define LOX_LEXER
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <memory>
 
 enum class TokenType {
-  EQUAL,
-  SEMICOLON,
+  LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+  COMMA, DOT, MINUS, PLUS, SEMICOLON, STAR, SLASH,
+  
+  BANG, BANG_EQUAL,
+  EQUAL, EQUAL_EQUAL,
+  GREATER, GREATER_EQUAL,
+  LESS, LESS_EQUAL,
 
-  IDENTIFIER,
-  NUMBER,
-  STRING,
+  IDENTIFIER, NUMBER, STRING,
+
+  AND, CLASS, ELSE, FALSE, TRUE, FOR,
+  IF, NIL, OR, PRINT, RETURN, SUPER, THIS,
+  VAR, WHILE,
 
   END_OF_FILE
 };
@@ -23,9 +31,9 @@ typedef struct {
 
 class Lexer {
 public:
-  Lexer();
+  Lexer(const std::string source);
   ~Lexer();
-  std::unique_ptr<std::vector<Token>> lex(const std::string source);
+  std::unique_ptr<std::vector<Token>> lex();
 };
 
 #endif
