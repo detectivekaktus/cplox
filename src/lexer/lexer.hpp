@@ -2,9 +2,9 @@
 #define LOX_LEXER
 
 #include <iostream>
-#include <vector>
 #include <string>
 #include <memory>
+#include <vector>
 
 enum class TokenType {
   LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -34,6 +34,18 @@ public:
   Lexer(const std::string source);
   ~Lexer();
   std::unique_ptr<std::vector<Token>> lex();
+
+  size_t errors;
+  bool hadError;
+private:
+  size_t cur;
+  std::string source;
+  std::unique_ptr<std::vector<Token>> tokens;
+
+  bool isAtEnd();
+
+  void addToken(TokenType type, std::string val);
+  void error(std::string msg);
 };
 
 #endif
