@@ -46,6 +46,7 @@ private:
   std::unique_ptr<std::vector<Token>> tokens;
 
   bool isAtEnd();
+  void advance();
 
   void addToken(TokenType type, std::string val);
   void error(std::string msg);

@@ -16,13 +16,17 @@ bool Lexer::isAtEnd() {
   return this->cur >= this->source.length();
 }
 
+void Lexer::advance() {
+  this->cur++;
+  this->displayColumn++;
+}
+
 void Lexer::addToken(TokenType type, std::string val) {
   Token token;
   token.type = type;
   token.val = val;
   this->tokens->push_back(token);
-  this->cur++;
-  this->displayColumn++;
+  this->advance();
 }
 
 void Lexer::error(std::string msg) {
@@ -47,8 +51,17 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
       case '+': this->addToken(TokenType::PLUS, "+"); break;
       case ';': this->addToken(TokenType::SEMICOLON, ";"); break;
       case '*': this->addToken(TokenType::STAR, "*"); break;
+
+      case '/': {
+        if (this->source[this->cur + 1] == '/') {
+          this->advance();
+          this->advance();
+          while (this->source[this->cur] != '\n' && !this->isAtEnd()) this->advance();
+        }
+        else this->addToken(TokenType::SLASH, "/");
+      } break;
       
-      case ' ': case '\r': case '\t': this->cur++; break;
+      case ' ': case '\r': case '\t': this->advance(); break;
       case '\n': {
         this->cur++;
         this->displayColumn = 0;
