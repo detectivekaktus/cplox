@@ -38,6 +38,9 @@ public:
   size_t errors;
   bool hadError;
 private:
+  size_t displayColumn;
+  size_t displayLine;
+
   size_t cur;
   std::string source;
   std::unique_ptr<std::vector<Token>> tokens;

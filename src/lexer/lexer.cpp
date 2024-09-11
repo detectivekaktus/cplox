@@ -2,6 +2,8 @@
 
 Lexer::Lexer(const std::string source) {
   this->cur = 0;
+  this->displayColumn = 0;
+  this->displayLine = 0;
   this->errors = 0;
   this->hadError = false;
   this->source = source;
@@ -20,6 +22,7 @@ void Lexer::addToken(TokenType type, std::string val) {
   token.val = val;
   this->tokens->push_back(token);
   this->cur++;
+  this->displayColumn++;
 }
 
 void Lexer::error(std::string msg) {
@@ -27,6 +30,7 @@ void Lexer::error(std::string msg) {
   this->hadError = true;
   this->errors++;
   this->cur++;
+  this->displayColumn++;
 }
 
 std::unique_ptr<std::vector<Token>> Lexer::lex() {
@@ -44,10 +48,15 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
       case ';': this->addToken(TokenType::SEMICOLON, ";"); break;
       case '*': this->addToken(TokenType::STAR, "*"); break;
       
-      case ' ': case '\n': case '\r': case '\t': this->cur++; break;
+      case ' ': case '\r': case '\t': this->cur++; break;
+      case '\n': {
+        this->cur++;
+        this->displayColumn = 0;
+        this->displayLine++;
+      } break;
 
       default: {
-        this->error("Unknown token " + std::string(1, c));
+        this->error(std::to_string(this->displayLine + 1) + ":" + std::to_string(this->displayColumn + 1) + " Unexpected character found: `" + std::string(1, c) + "`");
       } break;
     }
   }
