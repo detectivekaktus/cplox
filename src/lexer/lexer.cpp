@@ -21,6 +21,13 @@ void Lexer::advance() {
   this->displayColumn++;
 }
 
+bool Lexer::isNext(const char c) {
+  if (this->isAtEnd()) return false;
+  if (this->source[this->cur + 1] != c) return false;
+  this->advance();
+  return true;
+}
+
 void Lexer::addToken(TokenType type, std::string val) {
   Token token;
   token.type = type;
@@ -51,15 +58,18 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
       case '+': this->addToken(TokenType::PLUS, "+"); break;
       case ';': this->addToken(TokenType::SEMICOLON, ";"); break;
       case '*': this->addToken(TokenType::STAR, "*"); break;
-
       case '/': {
-        if (this->source[this->cur + 1] == '/') {
-          this->advance();
+        if (this->isNext('/')) {
           this->advance();
           while (this->source[this->cur] != '\n' && !this->isAtEnd()) this->advance();
         }
         else this->addToken(TokenType::SLASH, "/");
       } break;
+
+      case '=': this->isNext('=') ? this->addToken(TokenType::EQUAL_EQUAL, "==")   : this->addToken(TokenType::EQUAL, "="); break;
+      case '!': this->isNext('=') ? this->addToken(TokenType::BANG_EQUAL, "!=")    : this->addToken(TokenType::BANG, "!"); break;
+      case '>': this->isNext('=') ? this->addToken(TokenType::GREATER_EQUAL, ">=") : this->addToken(TokenType::GREATER, ">"); break;
+      case '<': this->isNext('=') ? this->addToken(TokenType::LESS_EQUAL, "<=")    : this->addToken(TokenType::LESS, "<"); break;
       
       case ' ': case '\r': case '\t': this->advance(); break;
       case '\n': {

@@ -47,6 +47,7 @@ private:
 
   bool isAtEnd();
   void advance();
+  bool isNext(const char c);
 
   void addToken(TokenType type, std::string val);
   void error(std::string msg);
