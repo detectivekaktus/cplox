@@ -26,6 +26,7 @@ void Lexer::error(std::string msg) {
   std::cerr << msg << std::endl;
   this->hadError = true;
   this->errors++;
+  this->cur++;
 }
 
 std::unique_ptr<std::vector<Token>> Lexer::lex() {
@@ -46,7 +47,7 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
       case ' ': case '\n': case '\r': case '\t': this->cur++; break;
 
       default: {
-        this->error("Unknown token " + c);
+        this->error("Unknown token " + std::string(1, c));
       } break;
     }
   }
