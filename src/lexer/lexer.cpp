@@ -65,6 +65,18 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
         }
         else this->addToken(TokenType::SLASH, "/");
       } break;
+      case '"': {
+        size_t start = this->cur;
+        this->advance();
+        while ((this->source[this->cur] != '\n' && this->source[this->cur] != '"') && !this->isAtEnd())
+          this->advance();
+        if (this->source[this->cur] == '\n' || this->isAtEnd())
+          this->error(std::to_string(this->displayLine + 1) + ":" + std::to_string(this->displayColumn + 1) + " Unterminated string literal");
+        std::string str = this->source.substr(start, cur - start);
+        str.erase(0, 1);
+        str.erase(str.length(), 1);
+        this->addToken(TokenType::STRING, str);
+      } break;
 
       case '=': this->isNext('=') ? this->addToken(TokenType::EQUAL_EQUAL, "==")   : this->addToken(TokenType::EQUAL, "="); break;
       case '!': this->isNext('=') ? this->addToken(TokenType::BANG_EQUAL, "!=")    : this->addToken(TokenType::BANG, "!"); break;
