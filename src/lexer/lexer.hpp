@@ -1,6 +1,7 @@
 #ifndef LOX_LEXER
 #define LOX_LEXER
 
+#include <cctype>
 #include <iostream>
 #include <string>
 #include <memory>

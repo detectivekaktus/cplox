@@ -91,7 +91,18 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
       } break;
 
       default: {
-        this->error(std::to_string(this->displayLine + 1) + ":" + std::to_string(this->displayColumn + 1) + " Unexpected character found: `" + std::string(1, c) + "`");
+        if (isdigit(c)) {
+          size_t start = this->cur;
+          while (isdigit(this->source[this->cur]) && !this->isAtEnd()) this->advance();
+          if (this->source[this->cur] == '.') {
+            this->advance();
+            while (isdigit(this->source[this->cur]) && !this->isAtEnd()) this->advance();
+          }
+          this->addToken(TokenType::NUMBER, this->source.substr(start, this->cur - start));
+        }
+        else
+          this->error(std::to_string(this->displayLine + 1) + ":" + std::to_string(this->displayColumn + 1) +
+                      " Unexpected character found: `" + std::string(1, c) + "`");
       } break;
     }
   }
