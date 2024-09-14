@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 enum class TokenType {
   LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -23,6 +24,24 @@ enum class TokenType {
   VAR, WHILE,
 
   END_OF_FILE
+};
+
+static std::unordered_map<std::string, TokenType> keywords = {
+  {"and", TokenType::AND},
+  {"class", TokenType::CLASS},
+  {"else", TokenType::ELSE},
+  {"true", TokenType::TRUE},
+  {"false", TokenType::FALSE},
+  {"for", TokenType::FOR},
+  {"if", TokenType::IF},
+  {"nil", TokenType::NIL},
+  {"or", TokenType::OR},
+  {"print", TokenType::PRINT},
+  {"return", TokenType::RETURN},
+  {"super", TokenType::SUPER},
+  {"this", TokenType::THIS},
+  {"var", TokenType::VAR},
+  {"while", TokenType::WHILE},
 };
 
 typedef struct {
@@ -52,6 +71,9 @@ private:
 
   void addToken(TokenType type, std::string val);
   void error(std::string msg);
+
+  bool isAlpha(char c);
+  bool isAlphaNumeric(char c);
 };
 
 #endif

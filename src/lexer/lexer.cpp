@@ -44,6 +44,16 @@ void Lexer::error(std::string msg) {
   this->displayColumn++;
 }
 
+bool Lexer::isAlpha(char c) {
+  return (c >= 'a' && c <= 'z') ||
+    (c >= 'A' && c <= 'Z') ||
+    c == '_';
+}
+
+bool Lexer::isAlphaNumeric(char c) {
+  return isdigit(c) || isAlpha(c);
+}
+
 std::unique_ptr<std::vector<Token>> Lexer::lex() {
   while (!this->isAtEnd()) {
     char c = this->source[this->cur];
@@ -99,6 +109,13 @@ std::unique_ptr<std::vector<Token>> Lexer::lex() {
             while (isdigit(this->source[this->cur]) && !this->isAtEnd()) this->advance();
           }
           this->addToken(TokenType::NUMBER, this->source.substr(start, this->cur - start));
+        }
+        else if (this->isAlpha(c)) {
+          size_t start = this->cur;
+          while(this->isAlphaNumeric(this->source[this->cur]) && !this->isAtEnd()) this->advance();
+          std::string val = this->source.substr(start, this->cur - start);
+          TokenType type = keywords[val];
+          this->addToken((bool) type ? type : TokenType::IDENTIFIER, val);
         }
         else
           this->error(std::to_string(this->displayLine + 1) + ":" + std::to_string(this->displayColumn + 1) +
