@@ -1,13 +1,16 @@
 #ifndef LOX_PARSER
 #define LOX_PARSER
 
+#include <cassert>
+#include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
 #include "../lexer/lexer.hpp"
 
 enum class StatementType {
-  VAR_DECLARATION
+  VAR_DECLARATION,
+  VAR_REFERENCE
 };
 
 typedef struct {
@@ -19,7 +22,7 @@ typedef struct {
 
 class Parser {
 public:
-  Parser(const std::unique_ptr<std::vector<Token>> tokens);
+  Parser(std::unique_ptr<std::vector<Token>>&& tokens);
   ~Parser();
   std::unique_ptr<std::vector<Statement>> parse();
 
@@ -28,6 +31,9 @@ public:
 private:
   std::unique_ptr<std::vector<Token>> tokens;
   std::unique_ptr<std::vector<Statement>> stmts;
+
+  uint32_t cur;
+  void addStatement(std::vector<Token> *tkns);
 };
 
 #endif
