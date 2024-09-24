@@ -10,48 +10,81 @@ Parser::Parser(std::unique_ptr<std::vector<Token>>&& tokens) {
 
 Parser::~Parser() { }
 
-void Parser::addStatement(std::vector<Token> *tkns) {
-  uint32_t i = 0;
-  switch (tkns->at(i).type) {
-    case TokenType::VAR: {
-      Statement stmt;
-      stmt.type = StatementType::VAR_DECLARATION;
-      stmt.left = tkns->at(++i).val;
-      stmt.op = tkns->at(++i).val;
-      stmt.right = tkns->at(++i).val;
-      this->stmts->push_back(stmt);
-    } break;
-    case TokenType::IDENTIFIER: {
-      Statement stmt;
-      stmt.type = StatementType::VAR_REFERENCE;
-      stmt.left = tkns->at(i++).val;
-      this->stmts->push_back(stmt);
-    } break;
-    default: {
-      assert(0 && "Not implemented");
-    } break;
+bool Parser::expect(TokenType type) {
+  if (this->tokens->at(this->cur).type == type) {
+    this->cur++;
+    return true;
   }
+  return false;
+}
+
+Token Parser::shift(TokenType type, std::string msg) {
+  if (this->tokens->at(this->cur).type == type) {
+    this->cur++;
+    return this->tokens->at(this->cur - 1);
+  }
+  this->errors++;
+  this->hadError = true;
+  return NULL;
+}
+
+void Parser::consume(TokenType type, std::string msg) {
+  if (this->tokens->at(this->cur).type == type) {
+    this->cur++;
+    return true;
+  }
+  this->errors++;
+  this->hadError = true;
+  std::cerr << msg << std::endl;
+  return false;
 }
 
 std::unique_ptr<std::vector<Statement>> Parser::parse() {
-  while (this->tokens->at(this->cur).type != TokenType::END_OF_FILE) {
-    Token tkn = this->tokens->at(this->cur);
-    std::vector<Token> tkns;
-    while (tkn.type != TokenType::END_OF_FILE) {
-      if (tkn.type == TokenType::SEMICOLON) {
-        tkns.push_back(tkn);
-        this->cur++;
-        break;
-      }
-      tkns.push_back(tkn);
-      tkn = this->tokens->at(++this->cur);
-    }
-    if (tkn.type != TokenType::SEMICOLON && tkn.type != TokenType::END_OF_FILE) {
-      std::cerr << "Statement wasn't closed with a semicolon" << std::endl;
-      this->hadError = true;
-      this->errors++;
-    }
-    this->addStatement(&tkns);
+  Token tkn = this->tokens[this->cur];
+  while (tkn.type != TokenType::END_OF_FILE) {
+    this->stmts->push_back(this->declaration());
+    tkn = this->token[++this->cur];
   }
   return std::move(this->stmts);
+}
+
+Statement Parser::declaration() {
+  if (this->expect(TokenType::VAR)) {
+    Statement stmt;
+    stmt.type = StatementType::VAR_DECLARATION;
+    Token tkn = this->shift(TokenType::IDENTIFIER, "Expected identifier after `var` keyword.");
+    stmt.left = tkn.val;
+    if (this->expect(TokenType::EQUAL)) {
+      Expression expr = this->expression();
+      stmt.right = expr.val;
+    }
+    this->consume(TokenType::SEMICOLON, "Expected semicolon after a statement.");
+    return stmt;
+  }
+  else this->statement();
+}
+
+Statement Parser::statement() {
+  if (this->expect(TokenType::PRINT))
+    this->print();
+  else
+    this->expressionStatement();
+}
+
+Statement Parser::print() {
+  Statement stmt;
+  stmt.type = StatementType::PRINT;
+  Expression expr = this->expression();
+  stmt.right = expr.val;
+  this->consume(TokenType::SEMICOLON, "Expected semicolon after a statement.");
+  return stmt;
+}
+
+Statement expressionStatement() {
+  Statement stmt;
+  stmt.type = StatementType::EXPRESSION;
+  Expression expr = this->expression();
+  stmt.left = expr.val;
+  this->consume(TokenType::SEMICOLON, "Expected semicolon after a statement.");
+  return stmt;
 }

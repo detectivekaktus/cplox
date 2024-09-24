@@ -1,7 +1,6 @@
 #ifndef LOX_PARSER
 #define LOX_PARSER
 
-#include <cassert>
 #include <iostream>
 #include <string>
 #include <memory>
@@ -10,15 +9,29 @@
 
 enum class StatementType {
   VAR_DECLARATION,
-  VAR_REFERENCE
+  EXPRESSION,
+  PRINT
 };
 
 typedef struct {
   StatementType type;
   std::string left;
-  std::string op;
   std::string right;
 } Statement;
+
+enum class ExpressionType {
+  EQUALITY,
+  COMPARISON,
+  TERM,
+  FACTOR,
+  UNARY,
+  PRIMARY
+};
+
+typedef struct {
+  ExpressionType type;
+  std::string val;
+} Expression;
 
 class Parser {
 public:
@@ -32,8 +45,22 @@ private:
   std::unique_ptr<std::vector<Token>> tokens;
   std::unique_ptr<std::vector<Statement>> stmts;
 
-  uint32_t cur;
-  void addStatement(std::vector<Token> *tkns);
+  size_t cur;
+  bool expect(TokenType type);
+  Token shift(TokenType type, std::string msg);
+  void consume(TokenType type, std::string msg);
+
+  Statement declaration();
+  Statement statement();
+  Statement print();
+  Statement expressionStatement();
+
+  Expression expression();
+  Expression equality();
+  Expression term();
+  Expression factor();
+  Expression unary();
+  Expression primary();
 };
 
 #endif
