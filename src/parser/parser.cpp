@@ -80,11 +80,50 @@ Statement Parser::print() {
   return stmt;
 }
 
-Statement expressionStatement() {
+Statement Parser::expressionStatement() {
   Statement stmt;
   stmt.type = StatementType::EXPRESSION;
   Expression expr = this->expression();
   stmt.left = expr.val;
   this->consume(TokenType::SEMICOLON, "Expected semicolon after a statement.");
   return stmt;
+}
+
+// Taken from https://craftinginterpreters.com/parsing-expressions.html
+//
+// The grammar schema of the Lox programming language is the following:
+// expression -> equality ;
+// equality   -> comparison ( ( "!=" | "==" ) comparison )* ;
+// comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+// term       -> factor ( ( "-" | "+" ) factor )* ;
+// factor     -> unary ( ( "/" | "*" ) unary )* ;
+// unary      -> ( "!" | "-" ) unary | primary ;
+// primary    -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+
+Expression Parser::expression() {
+  return equality();
+}
+
+Expression Parser::equality() {
+
+}
+
+Expression Parser::comparison() {
+
+}
+
+Expression Parser::term() {
+
+}
+
+Expression Parser::factor() {
+
+}
+
+Expression Parser::unary() {
+
+}
+
+Expression Parser::primary() {
+
 }

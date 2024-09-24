@@ -57,6 +57,7 @@ private:
 
   Expression expression();
   Expression equality();
+  Expression comparison();
   Expression term();
   Expression factor();
   Expression unary();
